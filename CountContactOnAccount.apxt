@@ -1,0 +1,23 @@
+trigger CountContactOnAccount on Contact (after INSERT, after UPDATE, after DELETE ) {
+Set <Id> accIds = new Set <Id>();
+List <Account> lstAccountsToUpdate = new List <Account>();
+ if(Trigger.isInsert){
+    for(Contact con:trigger.new){
+        accIds.add(con.accountID);
+    }
+}
+if(Trigger.isUpdate|| Trigger.isDelete){
+    for(Contact con:trigger.old){
+        accIds.add(con.accountID);
+    }
+}
+
+for(Account acc:[SELECT Id,Name,Number_of_Contacts__c,(Select Id from Contacts) from Account where Id IN: accIds]){
+    Account accObj = new Account ();
+    accObj.Id = acc.Id;
+    accObj.Number_of_Contacts__c = acc.Contacts.size();
+    lstAccountsToUpdate.add(accObj);
+}
+
+UPDATE lstAccountsToUpdate;
+}
