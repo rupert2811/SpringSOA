@@ -1,0 +1,23 @@
+public class SampleCalloutExample {
+ public class PostmanSample {
+         public String foo1;
+        public String foo2;
+        
+    }
+    
+    public class PostmanSampleResult {
+        public PostmanSample postsamp;
+    }
+
+	public static void getPostmanSampleData() {
+        Http http = new Http();
+        
+        HttpRequest request = new HttpRequest();
+        request.setEndpoint('https://postman-echo.com/get?foo1=bar1&foo2=bar2');
+        request.setMethod('GET');
+        
+        HttpResponse response = http.send(request);
+        PostmanSampleResult result = (PostmanSampleResult) JSON.deserialize(response.getBody(), PostmanSampleResult.class);
+        System.debug('Foo1 :' + result.postsamp.foo1 + '' + 'Foo2 :' + result.postsamp.foo2);        
+   }
+}
